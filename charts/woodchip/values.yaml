@@ -1,0 +1,19 @@
+replicaCount: 1
+service:
+  type: ClusterIP
+  port: 3000
+ingress:
+  enabled: true
+  className: 'nginx-public'
+  annotations: {}
+  hosts: []
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+env: {}

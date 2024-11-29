@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "woodchip.fullname" . }}
+  labels:
+    {{- include "woodchip.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "woodchip.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "woodchip.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "woodchip.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+            - name: backend
+              containerPort: 8080
+              protocol: TCP
+            - name: proxy
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: "AUTH0_DOMAIN"
+              value: {{ .Values.env.auth0Domain }}
+            - name: "AUTH0_CLIENTID"
+              value: {{ .Values.env.auth0ClientID }}
+            - name: "AUTH0_AUDIENCE"
+              value: {{ .Values.env.auth0Audience }}
+            - name: "VITE_GITHUB_CLIENT_ID"
+              value: {{ .Values.env.githubClientID }}
+            - name: "GITHUB_CLIENT_SECRET"
+              value: {{ .Values.env.githubClientSecret }}
+            - name: "MONGO_DB_URL"
+              value: {{ .Values.env.mongoDBUrl }}
+            - name: "VITE_AUTH0_DOMAIN"
+              value: {{ .Values.env.auth0Domain }}
+            - name: "VITE_AUTH0_CLIENTID"
+              value: {{ .Values.env.viteAuth0ClientID }}
+            - name: "AUTH0_CLIENT_SECRET"
+              value: {{ .Values.env.auth0ClientSecret }}
+            - name: "VITE_AUTH0_AUDIENCE"
+              value: {{ .Values.env.auth0Audience }}
+            - name: "VITE_PROXY_BASEURL"
+              value: {{ .Values.env.viteProxyUrl }}
+            - name: "VITE_FRONTEND_BASEURL"
+              value: {{ .Values.env.viteBaseUrl }}
+            - name: "VITE_SERVER_BASEURL"
+              value: {{ .Values.env.viteServerUrl }}
+            - name: "VITE_WOODCHIP_API_AUDIENCE"
+              value: {{ .Values.env.vitewoodchipAud }}
+            - name: "VITE_SHOW_HEADER"
+              value: {{ .Values.env.viteShowHeader }}
+            - name: "WOODCHIP_API_AUDIENCE"
+              value: {{ .Values.env.woodchipAud }}
+            - name: "AUTH0_ISSUER_BASEURL"
+              value: {{ .Values.env.IssuerUrl }}
+            - name: "NODE_TLS_REJECT_UNAUTHORIZED"
+              value: "0"
+            - name: "MAILGUN_API_KEY"
+              value: {{ .Values.env.mailgunApiKey }}
+            - name: "MAILGUN_DOMAIN"
+              value: {{ .Values.env.mailgunDomain }}
+            - name: "MAILGUN_FROM_EMAIL"
+              value: {{ .Values.env.mailgunFromEmail }}
+            - name: "MAILGUN_TO_EMAIL"
+              value: {{ .Values.env.mailgunToEmail }}
+            - name: "MAILGUN_TITLE"
+              value: {{ .Values.env.mailgunTitle }}
+            - name: "SMTP_USER"
+              value: {{ .Values.env.smtpUser }}
+            - name: "SMTP_PASSWORD"
+              value: {{ .Values.env.smtpPassword }}
+            - name: "SMTP_HOST"
+              value: {{ .Values.env.smtpHost }}
+            - name: "MAILER_NAME"
+              value: {{ .Values.env.mailerName }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
