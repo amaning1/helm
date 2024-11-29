@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  woodchip:
+  - apiVersion: v2
+    appVersion: 0.0.2
+    created: "2024-11-29T11:50:48.182103531Z"
+    description: The Helm chart for the jobs
+    digest: c106454b79838c2543bc6b88e90721c4a642bd524b16f7e3a01b77e52a2dc131
+    name: woodchip
+    type: application
+    urls:
+    - https://amaning1.github.io/helm/woodchip-0.1.2.tgz
+    version: 0.1.2
+generated: "2024-11-29T11:50:48.181709448Z"
