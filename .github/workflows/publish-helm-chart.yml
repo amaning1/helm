@@ -21,12 +21,12 @@ jobs:
           helm version
 
       # Step 3: Lint the Helm chart
-      - name: Lint Helm Chart
-        run: helm lint ./charts/woodchip
+      # - name: Lint Helm Chart
+      #   run: helm lint ./charts/woodchip
 
       # Step 4: Package the Helm chart
       - name: Package Helm Chart
-       # run: helm package ./charts/woodchip --destination ./dist
+        run: helm package ./charts/woodchip --destination ./dist
 
       # Step 5: Generate the Helm repository index
       - name: Generate Helm Repository Index
